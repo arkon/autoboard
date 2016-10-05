@@ -70,7 +70,7 @@ export default class NewCardForm extends Component {
         <input ref='name' type='text' defaultValue={data ? data.name : ''} />
 
         <label>Superclasses:</label>
-        <input ref='superclasses' type='text' defaultValue={data ? data.super : ''} />
+        <input id='ncfSuperclass' ref='superclasses' type='text' defaultValue={data ? data.superclasses : ''} />
 
         <label>Subclasses:</label>
         <input ref='subclasses' type='text' defaultValue={data ? data.sub : ''} />
