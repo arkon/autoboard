@@ -5,6 +5,8 @@ import Card from './Card';
 import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
 import Toast from './Toast';
+import PDFDocument from 'pdfkit';
+import blobStream from "blob-stream"
 
 /**
  * The "entry point" of the app.
@@ -68,6 +70,7 @@ export default class CRCMaker extends Component {
     this.generateShareLink = this.generateShareLink.bind(this);
     this.onShareClose = this.onShareClose.bind(this);
     this.toggleExport = this.toggleExport.bind(this);
+    this.generatePDF = this.generatePDF.bind(this);
   }
 
   componentDidMount () {
@@ -243,19 +246,50 @@ export default class CRCMaker extends Component {
     });
   }
 
-  // generatePDF () {
-  //   window.scrollTo(0, 0);
-  //   var cards = document.getElementById('cards');
+  generatePDF () {
+    window.scrollTo(0, 0);
+    var doc = new PDFDocument()
+    var stream = doc.pipe(blobStream());
+    
+    var cursorX = 20;
+    var cursorY = 20;
 
-  //   html2canvas(cards).then((canvas) => {
-  //     console.log(canvas);
-  //     var img = canvas.toDataUrl('image/png');
+    var threshold = (72 * 11) - 20
 
-  //     var doc = new jsPDF();
-  //     doc.addImage(img, 'JPEG', 20, 20);
-  //     doc.save('test_img.pdf');
-  //   });
-  // }
+    this.state.cards.map((data, i) => {
+      //get height of card
+      var maxItems = Math.max(data.responsibilities.length, data.collaborators.length);
+      var height = maxItems*24 + 100;
+      var width = 572
+
+      if(cursorY + height > threshold){
+        doc.addPage();
+        cursorY = 20;
+      } 
+
+      var type = data.type;
+      var superClasses = data.superclasses;
+      var name = data.name;
+      var subclasses = data.subclasses;
+      
+      doc.text(name, width/2, cursorY + 36)
+
+      doc.rect(cursorX, cursorY, width, height).stroke();
+
+      cursorY += 72;
+
+      var bottomBoxHeight = Math.max(52, 28 + maxItems*24);
+      doc.moveTo(cursorX, cursorY).lineTo(cursorX+width, cursorY).stroke();
+      doc.moveTo(cursorX + 429, cursorY).lineTo(cursorX + 429, cursorY + bottomBoxHeight).stroke();
+    
+      cursorY += bottomBoxHeight + 50;
+    })
+
+    doc.end();
+    stream.on('finish', function() {
+      window.location.href = stream.toBlobURL('application/pdf');
+    });
+  }
 
   render () {
     const state = this.state;
@@ -286,6 +320,7 @@ export default class CRCMaker extends Component {
                 }
 
                 <button onClick={this.toggleExport}>Export</button>
+                <button onClick={this.generatePDF}>PDF</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
                     <pre id='text-export' className='syntax'
