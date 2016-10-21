@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Clipboard from 'clipboard';
 
 import Card from './Card';
+import CardTypes from '../constants/CardTypes';
 import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
 import Toast from './Toast';
@@ -259,7 +260,7 @@ export default class CRCMaker extends Component {
     this.state.cards.map((data, i) => {
       //get height of card
       var maxItems = Math.max(data.responsibilities.length, data.collaborators.length);
-      var height = maxItems*24 + 100;
+      var height = maxItems*15 + 100;
       var width = 572
 
       if(cursorY + height > threshold){
@@ -267,21 +268,36 @@ export default class CRCMaker extends Component {
         cursorY = 20;
       } 
 
-      var type = data.type;
-      var superClasses = data.superclasses;
+      let type = '';
+      if (data.type == CardTypes.ABSTRACT) {
+        type = 'Abstract';
+      } else if (data.type == CardTypes.INTERFACE) {
+        type = 'Interface';
+      }
+      var superclasses = data.superclasses;
       var name = data.name;
       var subclasses = data.subclasses;
-      
-      doc.text(name, width/2, cursorY + 36)
+
+      doc.fontSize(15);
+      doc.text(type, cursorX + 3, cursorY + 10);
+      doc.text(superclasses, width - doc.widthOfString(superclasses) + 15, cursorY + 10, {width: doc.widthOfString(superclasses)});
+      doc.text(subclasses, width - doc.widthOfString(subclasses) + 15, cursorY + 50, {width: doc.widthOfString(subclasses)});
+      doc.fontSize(20);
+      doc.text(name, (width - doc.widthOfString(name)/2)/2, cursorY + 36, {width: doc.widthOfString(name)});
+      doc.fontSize(15);
 
       doc.rect(cursorX, cursorY, width, height).stroke();
 
       cursorY += 72;
 
-      var bottomBoxHeight = Math.max(52, 28 + maxItems*24);
+      var bottomBoxHeight = Math.max(43, 28 + maxItems*15);
       doc.moveTo(cursorX, cursorY).lineTo(cursorX+width, cursorY).stroke();
       doc.moveTo(cursorX + 429, cursorY).lineTo(cursorX + 429, cursorY + bottomBoxHeight).stroke();
-    
+     
+      doc.fontSize(12);
+      doc.list(data.responsibilities, cursorX+5, cursorY+15, {bulletIndex: true});
+      doc.list(data.collaborators, cursorX+434, cursorY+15, {bulletIndex: true});
+
       cursorY += bottomBoxHeight + 50;
     })
 
