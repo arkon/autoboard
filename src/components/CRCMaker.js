@@ -262,7 +262,7 @@ export default class CRCMaker extends Component {
     var width = 572;
     var marginBottom = 50;
     var marginTop = 20;
-    var textMarginLeft = 5;
+    var textMargin = 5;
     let bottomDividerXPos = 429;
     this.state.cards.map((data, i) => {
 
@@ -288,12 +288,12 @@ export default class CRCMaker extends Component {
       let subclasses = data.subclasses;
   
       doc.fontSize(15);
-      doc.text(type, cursorX + textMarginLeft, cursorY + 10);
+      doc.text(type, cursorX + textMargin, cursorY + 10);
 
-      //setting xPos to width - doc.widthOfString(superclasses) + 15 is proxy for marginLeft
-      //TODO: figure out why 15 works
-      doc.text(superclasses, width - doc.widthOfString(superclasses) + 15, cursorY + 10, {width: doc.widthOfString(superclasses)});
-      doc.text(subclasses, width - doc.widthOfString(subclasses) + 15, cursorY + 50, {width: doc.widthOfString(subclasses)});
+      //setting xPos to width - doc.widthOfString(superclasses) + textMargin + 10 is proxy for marginLeft
+      //need to add 10 because doc.widthOfString is not accurate and adding unwanted space
+      doc.text(superclasses, width - doc.widthOfString(superclasses) + textMargin + 10, cursorY + 10, {width: doc.widthOfString(superclasses)});
+      doc.text(subclasses, width - doc.widthOfString(subclasses) + textMargin + 10, cursorY + 50, {width: doc.widthOfString(subclasses)});
       doc.fontSize(20);
 
       //center align
@@ -312,8 +312,8 @@ export default class CRCMaker extends Component {
       doc.fontSize(12);
 
       //marginTop - 5 because doc.List has some weird spacing at the top
-      doc.list(data.responsibilities, cursorX+textMarginLeft, cursorY+marginTop-5, {bulletIndex: true});
-      doc.list(data.collaborators, cursorX+textMarginLeft+bottomDividerXPos, cursorY+marginTop-5, {bulletIndex: true});
+      doc.list(data.responsibilities, cursorX+textMargin, cursorY+marginTop-5, {bulletIndex: true});
+      doc.list(data.collaborators, cursorX+textMargin+bottomDividerXPos, cursorY+marginTop-5, {bulletIndex: true});
       
       cursorY += bottomBoxHeight + marginBottom;
     });
