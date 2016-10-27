@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var OfflinePlugin = require('offline-plugin');
 
 module.exports = {
   entry: [
@@ -31,7 +32,17 @@ module.exports = {
   },
   plugins: [
     new webpack.NamedModulesPlugin(),
-    new ExtractTextPlugin('style.css'),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false, // ...but do not show warnings in the console (there is a lot of them)
+      },
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production'),
+      },
+    }),
+    new ExtractTextPlugin('style.[hash].css'),
     new HtmlWebpackPlugin({
       template: './src/index.html',
       minify: {
@@ -47,6 +58,12 @@ module.exports = {
         minifyURLs: true,
       },
       inject: true,
+    }),
+    new OfflinePlugin({
+      publicPath: '/',
+      relativePaths: false,
+      safeToUseOptionalCaches: true,
+      AppCache: false,
     }),
   ]
 }

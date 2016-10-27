@@ -25,3 +25,7 @@ if (module.hot) {
     );
   });
 }
+
+// We want to install the web workers after everything instantiates correctly
+import { install } from 'offline-plugin/runtime';
+install();
