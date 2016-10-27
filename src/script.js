@@ -10,7 +10,7 @@ render(
   <AppContainer>
     <CRCMaker />
   </AppContainer>,
-document.getElementById('main'));
+  document.getElementById('main'));
 
 // REACT HMR
 if (module.hot) {
@@ -19,8 +19,7 @@ if (module.hot) {
     render(
       <AppContainer>
         <NextHotLoaded />
-      </AppContainer>
-      ,
+      </AppContainer>,
       document.getElementById('main')
     );
   });

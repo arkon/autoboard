@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "node ./webpack.server.js",
     "build": "rimraf ./dist && webpack --config ./webpack/webpack.prod.config.js",
-    "preview": "http-server ./dist -c-1 -o"
+    "preview": "http-server -p 3001 ./dist -c-1 -o"
   },
   "dependencies": {
     "clipboard": "^1.5.12",
@@ -34,6 +34,8 @@
     "rimraf": "^2.5.4",
     "sass-loader": "^4.0.2",
     "webpack": "2.1.0-beta.22",
-    "webpack-dev-server": "2.1.0-beta.9"
+    "webpack-dev-server": "2.1.0-beta.9",
+    "webpack-merge": "^0.15.0",
+    "webpack-validator": "^2.2.9"
   }
 }

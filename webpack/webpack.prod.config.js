@@ -1,37 +1,22 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var OfflinePlugin = require('offline-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OfflinePlugin = require('offline-plugin');
 
-module.exports = {
-  entry: [
-    './src/script.js'
-  ],
+module.exports = require('./webpack.base.config.js')({
   output: {
-    path: path.resolve(process.cwd(), 'dist'),
     filename: 'app.[hash].js',
+    path: path.resolve(process.cwd(), 'dist'),
   },
-  devtool: 'eval',
-  module: {
-    loaders:[{
-      test: /\.js$/,
-      include: path.resolve(process.cwd(), 'src'),
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015', 'react'],
-      },
-    }, {
-      test: /\.scss$/,
-      exclude: /node_modules/,
-      loader: ExtractTextPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: 'css!sass',
-      }),
-    }],
+  babelQuery: {
+    presets: ['es2015', 'react'],
   },
+  sassLoader: ExtractTextPlugin.extract({
+    fallbackLoader: 'style-loader',
+    loader: 'css!sass',
+  }),
   plugins: [
-    new webpack.NamedModulesPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false, // ...but do not show warnings in the console (there is a lot of them)
@@ -65,5 +50,5 @@ module.exports = {
       safeToUseOptionalCaches: true,
       AppCache: false,
     }),
-  ]
-}
+  ],
+});
