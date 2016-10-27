@@ -19,14 +19,14 @@ module.exports = {
       include: path.resolve(process.cwd(), 'src'),
       loader: 'babel-loader',
       query: {
-        presets: ['es2015', 'stage-0', 'react'],
+        presets: ['es2015', 'react'],
       },
     }, {
       test: /\.scss$/,
       exclude: /node_modules/,
       loader: ExtractTextPlugin.extract({
         fallbackLoader: 'style-loader',
-        loader: 'css!sass?indentedSyntax=true&sourceMap=true',
+        loader: 'css!sass',
       }),
     }],
   },

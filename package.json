@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "node ./webpack.server.js",
     "build": "rimraf ./dist && webpack --config ./webpack/webpack.prod.config.js",
-    "preview": "http-server ./dist -S -C cert.pem -o"
+    "preview": "http-server ./dist -c-1 -S -C cert.pem -K key.pem -o"
   },
   "dependencies": {
     "clipboard": "^1.5.12",
@@ -25,7 +25,6 @@
     "babel-plugin-transform-class-properties": "^6.16.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
-    "babel-preset-stage-0": "^6.16.0",
     "extract-text-webpack-plugin": "v2.0.0-beta.4",
     "html-webpack-plugin": "^2.24.0",
     "http-server": "^0.9.0",

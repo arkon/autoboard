@@ -16,7 +16,7 @@ document.getElementById('main'));
 if (module.hot) {
   module.hot.accept('./components/CRCMaker', () => {
     const NextHotLoaded = require('./components/CRCMaker.js').default; // eslint-disable-line
-    ReactDOM.render(
+    render(
       <AppContainer>
         <NextHotLoaded />
       </AppContainer>

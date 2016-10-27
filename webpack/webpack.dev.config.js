@@ -18,7 +18,7 @@ module.exports = {
       include: path.resolve(process.cwd(), 'src'),
       loader: 'babel-loader',
       query: {
-        presets: ['es2015', 'stage-0', 'react'],
+        presets: ['es2015', 'react'],
         plugins: ['react-hot-loader/babel'],
       },
     }, {

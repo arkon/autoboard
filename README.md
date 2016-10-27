@@ -14,7 +14,6 @@ To install the required dependencies, simply run the following commands in the r
 
 ```shell
 $ npm install
-$ yarn install
 ```
 
 ### Development tasks
