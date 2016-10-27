@@ -14,6 +14,7 @@ To install the required dependencies, simply run the following commands in the r
 
 ```shell
 $ npm install
+$ yarn install
 ```
 
 ### Development tasks
@@ -27,7 +28,7 @@ $ npm run build
 If you want to launch a development server and automatically recompile on file changes, run:
 
 ```shell
-$ npm run watch
+$ npm run dev
 ```
 
 This will automatically open up <http://localhost:3000/> in your default browser.
