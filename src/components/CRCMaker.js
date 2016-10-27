@@ -319,8 +319,8 @@ export default class CRCMaker extends Component {
     });
 
     doc.end();
-    stream.on('finish', function() {
-      window.location.href = stream.toBlobURL('application/pdf');
+    stream.on('finish', () => {
+      window.open(stream.toBlobURL('application/pdf'));
     });
   }
 
