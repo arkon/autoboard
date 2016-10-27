@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import blobStream from 'blob-stream';
 import Clipboard from 'clipboard';
 import PDFDocument from 'pdfkit';
-import blobStream from 'blob-stream';
 
 import CardTypes from '../constants/CardTypes';
 import Card from './Card';
@@ -318,7 +318,10 @@ export default class CRCMaker extends Component {
       cursorY += bottomBoxHeight + marginBottom;
     });
 
+    doc.info.Title = 'crc';
     doc.end();
+
+    // Open generated PDF in new window/tab
     stream.on('finish', () => {
       window.open(stream.toBlobURL('application/pdf'));
     });
@@ -353,7 +356,7 @@ export default class CRCMaker extends Component {
                 }
 
                 <button onClick={this.toggleExport}>Export</button>
-                <button onClick={this.generatePDF}>Download PDF</button>
+                <button onClick={this.generatePDF}>Download PDF (beta)</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
                     <pre id='text-export' className='syntax'
