@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "node ./webpack.server.js",
     "build": "rimraf ./dist && webpack --config ./webpack/webpack.prod.config.js",
-    "preview": "http-server ./dist -c-1 -S -C cert.pem -K key.pem -o"
+    "preview": "http-server ./dist -c-1 -o"
   },
   "dependencies": {
     "clipboard": "^1.5.12",
