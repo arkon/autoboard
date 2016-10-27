@@ -13,7 +13,7 @@ render(
   document.getElementById('main'));
 
 // REACT HMR
-if (module.hot) {
+if (process.env.NODE_ENV === 'development' && module.hot) {
   module.hot.accept('./components/CRCMaker', () => {
     const NextHotLoaded = require('./components/CRCMaker.js').default; // eslint-disable-line
     render(
