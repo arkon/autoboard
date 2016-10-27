@@ -7,7 +7,7 @@ import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
 import Toast from './Toast';
 import PDFDocument from 'pdfkit';
-import blobStream from "blob-stream"
+import blobStream from 'blob-stream';
 
 /**
  * The "entry point" of the app.
