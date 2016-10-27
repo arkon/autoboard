@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import Clipboard from 'clipboard';
+import PDFDocument from 'pdfkit';
+import blobStream from 'blob-stream';
 
-import Card from './Card';
 import CardTypes from '../constants/CardTypes';
+import Card from './Card';
 import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
 import Toast from './Toast';
-import PDFDocument from 'pdfkit';
-import blobStream from 'blob-stream';
 
 /**
  * The "entry point" of the app.
@@ -248,24 +248,32 @@ export default class CRCMaker extends Component {
   }
 
   generatePDF () {
-    window.scrollTo(0, 0);
-    var doc = new PDFDocument()
+    var doc = new PDFDocument();
     var stream = doc.pipe(blobStream());
     
-    var cursorX = 20;
-    var cursorY = 20;
+    let cursorX = 20;
+    let cursorY = 20;
 
-    var threshold = (72 * 11) - 20
-
+    //height of valid rendering area of page, used to check against drawing overflow
+    //1 inch = 72 pdf unit, with 20 pdf unit margin
+    const threshold = (72 * 11) - 20;
+      
+    //width of rendering area
+    var width = 572;
+    var marginBottom = 50;
+    var marginTop = 20;
+    var textMarginLeft = 5;
+    let bottomDividerXPos = 429;
     this.state.cards.map((data, i) => {
-      //get height of card
-      var maxItems = Math.max(data.responsibilities.length, data.collaborators.length);
-      var height = maxItems*15 + 100;
-      var width = 572
 
+      //determine height of card using the number of items it contains
+      const maxItems = Math.max(data.responsibilities.length, data.collaborators.length);
+      var height = maxItems*15 + 100;
+      
+      //check for overflow
       if(cursorY + height > threshold){
         doc.addPage();
-        cursorY = 20;
+        cursorY = marginTop;
       } 
 
       let type = '';
@@ -274,32 +282,41 @@ export default class CRCMaker extends Component {
       } else if (data.type == CardTypes.INTERFACE) {
         type = 'Interface';
       }
-      var superclasses = data.superclasses;
-      var name = data.name;
-      var subclasses = data.subclasses;
 
+      let superclasses = data.superclasses;
+      let name = data.name;
+      let subclasses = data.subclasses;
+  
       doc.fontSize(15);
-      doc.text(type, cursorX + 3, cursorY + 10);
+      doc.text(type, cursorX + textMarginLeft, cursorY + 10);
+
+      //setting xPos to width - doc.widthOfString(superclasses) + 15 is proxy for marginLeft
+      //TODO: figure out why 15 works
       doc.text(superclasses, width - doc.widthOfString(superclasses) + 15, cursorY + 10, {width: doc.widthOfString(superclasses)});
       doc.text(subclasses, width - doc.widthOfString(subclasses) + 15, cursorY + 50, {width: doc.widthOfString(subclasses)});
       doc.fontSize(20);
+
+      //center align
       doc.text(name, (width - doc.widthOfString(name)/2)/2, cursorY + 36, {width: doc.widthOfString(name)});
       doc.fontSize(15);
 
       doc.rect(cursorX, cursorY, width, height).stroke();
 
       cursorY += 72;
-
+      
+      //make minimum spacing as if maxItems=1
       var bottomBoxHeight = Math.max(43, 28 + maxItems*15);
       doc.moveTo(cursorX, cursorY).lineTo(cursorX+width, cursorY).stroke();
-      doc.moveTo(cursorX + 429, cursorY).lineTo(cursorX + 429, cursorY + bottomBoxHeight).stroke();
+      doc.moveTo(cursorX + bottomDividerXPos, cursorY).lineTo(cursorX + bottomDividerXPos, cursorY + bottomBoxHeight).stroke();
      
       doc.fontSize(12);
-      doc.list(data.responsibilities, cursorX+5, cursorY+15, {bulletIndex: true});
-      doc.list(data.collaborators, cursorX+434, cursorY+15, {bulletIndex: true});
 
-      cursorY += bottomBoxHeight + 50;
-    })
+      //marginTop - 5 because doc.List has some weird spacing at the top
+      doc.list(data.responsibilities, cursorX+textMarginLeft, cursorY+marginTop-5, {bulletIndex: true});
+      doc.list(data.collaborators, cursorX+textMarginLeft+bottomDividerXPos, cursorY+marginTop-5, {bulletIndex: true});
+      
+      cursorY += bottomBoxHeight + marginBottom;
+    });
 
     doc.end();
     stream.on('finish', function() {
@@ -336,7 +353,7 @@ export default class CRCMaker extends Component {
                 }
 
                 <button onClick={this.toggleExport}>Export</button>
-                <button onClick={this.generatePDF}>PDF</button>
+                <button onClick={this.generatePDF}>Download PDF</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
                     <pre id='text-export' className='syntax'
