@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Clipboard from 'clipboard';
+import PDFDocument from 'pdfkit';
+import blobStream from 'blob-stream';
 
+import CardTypes from '../constants/CardTypes';
 import Card from './Card';
 import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
@@ -68,6 +71,7 @@ export default class CRCMaker extends Component {
     this.generateShareLink = this.generateShareLink.bind(this);
     this.onShareClose = this.onShareClose.bind(this);
     this.toggleExport = this.toggleExport.bind(this);
+    this.generatePDF = this.generatePDF.bind(this);
   }
 
   componentDidMount () {
@@ -243,19 +247,82 @@ export default class CRCMaker extends Component {
     });
   }
 
-  // generatePDF () {
-  //   window.scrollTo(0, 0);
-  //   var cards = document.getElementById('cards');
+  generatePDF () {
+    var doc = new PDFDocument();
+    var stream = doc.pipe(blobStream());
+    
+    let cursorX = 20;
+    let cursorY = 20;
 
-  //   html2canvas(cards).then((canvas) => {
-  //     console.log(canvas);
-  //     var img = canvas.toDataUrl('image/png');
+    //height of valid rendering area of page, used to check against drawing overflow
+    //1 inch = 72 pdf unit, with 20 pdf unit margin
+    const threshold = (72 * 11) - 20;
+      
+    //width of rendering area
+    var width = 572;
+    var marginBottom = 50;
+    var marginTop = 20;
+    var textMargin = 5;
+    let bottomDividerXPos = 429;
+    this.state.cards.map((data, i) => {
 
-  //     var doc = new jsPDF();
-  //     doc.addImage(img, 'JPEG', 20, 20);
-  //     doc.save('test_img.pdf');
-  //   });
-  // }
+      //determine height of card using the number of items it contains
+      const maxItems = Math.max(data.responsibilities.length, data.collaborators.length);
+      var height = maxItems*15 + 100;
+      
+      //check for overflow
+      if(cursorY + height > threshold){
+        doc.addPage();
+        cursorY = marginTop;
+      } 
+
+      let type = '';
+      if (data.type == CardTypes.ABSTRACT) {
+        type = 'Abstract';
+      } else if (data.type == CardTypes.INTERFACE) {
+        type = 'Interface';
+      }
+
+      let superclasses = data.superclasses;
+      let name = data.name;
+      let subclasses = data.subclasses;
+  
+      doc.fontSize(15);
+      doc.text(type, cursorX + textMargin, cursorY + 10);
+
+      //setting xPos to width - doc.widthOfString(superclasses) + textMargin + 10 is proxy for marginLeft
+      //need to add 10 because doc.widthOfString is not accurate and adding unwanted space
+      doc.text(superclasses, width - doc.widthOfString(superclasses) + textMargin + 10, cursorY + 10, {width: doc.widthOfString(superclasses)});
+      doc.text(subclasses, width - doc.widthOfString(subclasses) + textMargin + 10, cursorY + 50, {width: doc.widthOfString(subclasses)});
+      doc.fontSize(20);
+
+      //center align
+      doc.text(name, (width - doc.widthOfString(name)/2)/2, cursorY + 36, {width: doc.widthOfString(name)});
+      doc.fontSize(15);
+
+      doc.rect(cursorX, cursorY, width, height).stroke();
+
+      cursorY += 72;
+      
+      //make minimum spacing as if maxItems=1
+      var bottomBoxHeight = Math.max(43, 28 + maxItems*15);
+      doc.moveTo(cursorX, cursorY).lineTo(cursorX+width, cursorY).stroke();
+      doc.moveTo(cursorX + bottomDividerXPos, cursorY).lineTo(cursorX + bottomDividerXPos, cursorY + bottomBoxHeight).stroke();
+     
+      doc.fontSize(12);
+
+      //marginTop - 5 because doc.List has some weird spacing at the top
+      doc.list(data.responsibilities, cursorX+textMargin, cursorY+marginTop-5, {bulletIndex: true});
+      doc.list(data.collaborators, cursorX+textMargin+bottomDividerXPos, cursorY+marginTop-5, {bulletIndex: true});
+      
+      cursorY += bottomBoxHeight + marginBottom;
+    });
+
+    doc.end();
+    stream.on('finish', function() {
+      window.location.href = stream.toBlobURL('application/pdf');
+    });
+  }
 
   render () {
     const state = this.state;
@@ -286,6 +353,7 @@ export default class CRCMaker extends Component {
                 }
 
                 <button onClick={this.toggleExport}>Export</button>
+                <button onClick={this.generatePDF}>Download PDF</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
                     <pre id='text-export' className='syntax'
