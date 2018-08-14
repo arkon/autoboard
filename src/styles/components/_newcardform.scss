@@ -10,3 +10,7 @@
   flex-flow: row nowrap;
   justify-content: space-between;
 }
+
+.cards__empty > button {
+	margin: 5px;
+}

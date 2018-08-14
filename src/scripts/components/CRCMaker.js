@@ -47,6 +47,9 @@ export default class CRCMaker extends Component {
       // Whether or not to show the textbox with the share link
       shareVisible    : false,
 
+      // Import from JSON dialog
+      importVisible   : false,
+
       // Export JSON dialog
       exportVisible   : false,
 
@@ -69,6 +72,7 @@ export default class CRCMaker extends Component {
     this.moveCardDown = this.moveCardDown.bind(this);
     this.generateShareLink = this.generateShareLink.bind(this);
     this.onShareClose = this.onShareClose.bind(this);
+    this.toggleImport = this.toggleImport.bind(this);
     this.toggleExport = this.toggleExport.bind(this);
   }
 
@@ -220,6 +224,12 @@ export default class CRCMaker extends Component {
     });
   }
 
+  toggleImport () {
+    this.setState({
+      importVisible: !this.state.importVisible
+    });
+  }
+
   toggleExport () {
     this.setState({
       exportVisible: !this.state.exportVisible
@@ -254,14 +264,16 @@ export default class CRCMaker extends Component {
                   </Dialog>
                 }
 
+                <button onClick={this.toggleImport}>Import</button>
+
                 <button onClick={this.toggleExport}>Export</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
-                    <pre id='text-export' className='syntax'
-                      dangerouslySetInnerHTML={{__html: syntaxHighlight(state.cards)}} />
-
                     <button className='copy' data-clipboard-target='#text-export'>Copy</button>
                     <button onClick={this.toggleExport}>Close</button>
+
+                    <pre id='text-export' className='syntax'
+                      dangerouslySetInnerHTML={{__html: syntaxHighlight(state.cards)}} />
                   </Dialog>
                 }
 
@@ -283,6 +295,7 @@ export default class CRCMaker extends Component {
             <div className='cards__empty'>
               <p>You don't have any cards yet.</p>
               <button onClick={this.toggleNewCardForm}>New card</button>
+              <button onClick={this.toggleImport}>Import Cards</button>
             </div>
           }
 
@@ -311,6 +324,18 @@ export default class CRCMaker extends Component {
             </div>
           ) }
         </main>
+
+        { state.importVisible &&
+          <Dialog title='Import from JSON' onClose={this.toggleImport}>
+            <textarea id='json-import' onChange={e => this.inputJson = e.target.value}></textarea>
+
+            <button onClick={() => {
+              this.setState({ cards: JSON.parse(this.inputJson) });
+              this.toggleImport();
+            }}>Import</button>
+            <button onClick={this.toggleImport}>Close</button>
+          </Dialog>
+        }
 
         <Toast visible={state.toastVisible}>{state.toastText}</Toast>
       </div>
