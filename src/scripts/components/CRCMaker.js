@@ -268,11 +268,11 @@ export default class CRCMaker extends Component {
                 <button onClick={this.toggleExport}>Export</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
-                    <button className='copy' data-clipboard-target='#text-export'>Copy</button>
-                    <button onClick={this.toggleExport}>Close</button>
-
                     <pre id='text-export' className='syntax'
                       dangerouslySetInnerHTML={{__html: syntaxHighlight(state.cards)}} />
+
+                    <button className='copy' data-clipboard-target='#text-export'>Copy</button>
+                    <button onClick={this.toggleExport}>Close</button>
                   </Dialog>
                 }
 
