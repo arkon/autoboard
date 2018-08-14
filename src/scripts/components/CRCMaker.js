@@ -5,6 +5,7 @@ import Card from './Card';
 import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
 import Toast from './Toast';
+import ImportForm from './ImportForm';
 
 import syntaxHighlight from '../modules/syntax';
 
@@ -264,8 +265,6 @@ export default class CRCMaker extends Component {
                   </Dialog>
                 }
 
-                <button onClick={this.toggleImport}>Import</button>
-
                 <button onClick={this.toggleExport}>Export</button>
                 { state.exportVisible &&
                   <Dialog title='Export JSON' onClose={this.toggleExport}>
@@ -325,17 +324,10 @@ export default class CRCMaker extends Component {
           ) }
         </main>
 
-        { state.importVisible &&
-          <Dialog title='Import from JSON' onClose={this.toggleImport}>
-            <textarea id='json-import' onChange={e => this.inputJson = e.target.value}></textarea>
-
-            <button onClick={() => {
-              this.setState({ cards: JSON.parse(this.inputJson) });
-              this.toggleImport();
-            }}>Import</button>
-            <button onClick={this.toggleImport}>Close</button>
-          </Dialog>
-        }
+        <ImportForm isVisible={state.importVisible} onParsed={cards => {
+          this.setState({ cards });
+          this.toggleImport();
+        }} onClose={this.toggleImport} />
 
         <Toast visible={state.toastVisible}>{state.toastText}</Toast>
       </div>
