@@ -74,6 +74,7 @@ export default class CRCMaker extends Component {
     this.generateShareLink = this.generateShareLink.bind(this);
     this.onShareClose = this.onShareClose.bind(this);
     this.toggleImport = this.toggleImport.bind(this);
+    this.onImportParsed = this.onImportParsed.bind(this);
     this.toggleExport = this.toggleExport.bind(this);
   }
 
@@ -231,6 +232,11 @@ export default class CRCMaker extends Component {
     });
   }
 
+  onImportParsed (cards) {
+    this.setState({ cards });
+    this.toggleImport();
+  }
+
   toggleExport () {
     this.setState({
       exportVisible: !this.state.exportVisible
@@ -293,8 +299,8 @@ export default class CRCMaker extends Component {
           { state.cards.length === 0 &&
             <div className='cards__empty'>
               <p>You don't have any cards yet.</p>
-              <button onClick={this.toggleNewCardForm}>New card</button>
-              <button onClick={this.toggleImport}>Import Cards</button>
+              <button className='cards__empty__action' onClick={this.toggleNewCardForm}>New card</button>
+              <button className='cards__empty__action' onClick={this.toggleImport}>Import Cards</button>
             </div>
           }
 
@@ -324,10 +330,7 @@ export default class CRCMaker extends Component {
           ) }
         </main>
 
-        <ImportForm isVisible={state.importVisible} onParsed={cards => {
-          this.setState({ cards });
-          this.toggleImport();
-        }} onClose={this.toggleImport} />
+        <ImportForm isVisible={state.importVisible} onParsed={this.onImportParsed} onClose={this.toggleImport} />
 
         <Toast visible={state.toastVisible}>{state.toastText}</Toast>
       </div>
