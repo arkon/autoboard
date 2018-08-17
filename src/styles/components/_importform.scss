@@ -3,6 +3,6 @@
   resize: vertical;
 }
 
-.import-form__action {
-  margin-right: 1em;
+.import-form__action + .import-form__action {
+  margin-left: 1em;
 }
