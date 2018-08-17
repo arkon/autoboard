@@ -10,7 +10,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "scripts": {
     "dev": "node ./webpack/webpack.server.js",
