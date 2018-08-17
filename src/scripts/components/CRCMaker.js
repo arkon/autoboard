@@ -5,6 +5,7 @@ import Card from './Card';
 import Dialog from './Dialog';
 import NewCardForm from './NewCardForm';
 import Toast from './Toast';
+import ImportForm from './ImportForm';
 
 import syntaxHighlight from '../modules/syntax';
 
@@ -47,6 +48,9 @@ export default class CRCMaker extends Component {
       // Whether or not to show the textbox with the share link
       shareVisible    : false,
 
+      // Import from JSON dialog
+      importVisible   : false,
+
       // Export JSON dialog
       exportVisible   : false,
 
@@ -69,6 +73,8 @@ export default class CRCMaker extends Component {
     this.moveCardDown = this.moveCardDown.bind(this);
     this.generateShareLink = this.generateShareLink.bind(this);
     this.onShareClose = this.onShareClose.bind(this);
+    this.toggleImport = this.toggleImport.bind(this);
+    this.onImportParsed = this.onImportParsed.bind(this);
     this.toggleExport = this.toggleExport.bind(this);
   }
 
@@ -220,6 +226,17 @@ export default class CRCMaker extends Component {
     });
   }
 
+  toggleImport () {
+    this.setState({
+      importVisible: !this.state.importVisible
+    });
+  }
+
+  onImportParsed (cards) {
+    this.setState({ cards });
+    this.toggleImport();
+  }
+
   toggleExport () {
     this.setState({
       exportVisible: !this.state.exportVisible
@@ -282,7 +299,8 @@ export default class CRCMaker extends Component {
           { state.cards.length === 0 &&
             <div className='cards__empty'>
               <p>You don't have any cards yet.</p>
-              <button onClick={this.toggleNewCardForm}>New card</button>
+              <button className='cards__empty__action' onClick={this.toggleNewCardForm}>New card</button>
+              <button className='cards__empty__action' onClick={this.toggleImport}>Import Cards</button>
             </div>
           }
 
@@ -311,6 +329,8 @@ export default class CRCMaker extends Component {
             </div>
           ) }
         </main>
+
+        <ImportForm isVisible={state.importVisible} onParsed={this.onImportParsed} onClose={this.toggleImport} />
 
         <Toast visible={state.toastVisible}>{state.toastText}</Toast>
       </div>
