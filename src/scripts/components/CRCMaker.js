@@ -7,6 +7,7 @@ import NewCardForm from './NewCardForm';
 import Toast from './Toast';
 import ImportForm from './ImportForm';
 
+import {decode, encode} from '../utils/base64Utils';
 import syntaxHighlight from '../modules/syntax';
 
 /**
@@ -22,7 +23,7 @@ export default class CRCMaker extends Component {
 
     // An array of cards from the URL or localStorage, if available
     const cardsData = shareParamRes ?
-      JSON.parse(atob(decodeURIComponent(shareParamRes[1].replace(/\+/g, ' ')))) :
+      JSON.parse(decode(decodeURIComponent(shareParamRes[1].replace(/\+/g, ' ')))) :
       localStorage.cards ?
         JSON.parse(localStorage.cards) :
         [];
@@ -207,7 +208,7 @@ export default class CRCMaker extends Component {
 
   generateShareLink () {
     const cleanUrl = `${location.protocol}//${location.host}${location.pathname}`,
-      encoded  = this.state.cards.length > 0 ? btoa(JSON.stringify(this.state.cards)) : null;
+      encoded  = this.state.cards.length > 0 ? encode(JSON.stringify(this.state.cards)) : null;
 
     this.setState({
       shareLink    : encoded ? `${cleanUrl}?share=${encoded}` : cleanUrl,
