@@ -15,8 +15,6 @@ module.exports = merge(commonConfig, {
       }
     }),
 
-    new webpack.optimize.UglifyJsPlugin(),
-
     new CopyWebpackPlugin([{
       from: helpers.root('src/public')
     }]),

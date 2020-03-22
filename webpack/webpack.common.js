@@ -12,8 +12,7 @@ module.exports = {
 
   output: {
     path: helpers.root('dist'),
-    filename: '[name].[hash].js',
-    chunkFilename: '[id].[hash].chunk.js'
+    filename: '[name].[hash].js'
   },
 
   resolve: {
