@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import * as OfflinePluginRuntime from 'offline-plugin/runtime';
+import * as OfflinePluginRuntime from '@lcdp/offline-plugin/runtime';
 
 import CRCMaker from './components/CRCMaker';
 

@@ -1,7 +1,6 @@
 const webpack = require('webpack');
-const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const helpers = require('./helpers');
 
@@ -24,39 +23,42 @@ module.exports = {
       {
         test: /\.js$/,
         include: helpers.root('src/scripts'),
-        loader: 'babel-loader'
+        use: 'babel-loader',
       },
 
       {
         test: /\.scss$/,
         include: helpers.root('src/styles'),
-        loader: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                'sourceMap': true,
-                'importLoaders': 1
-              }
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    'autoprefixer',
+                  ],
+                ],
+              },
             },
-            {
-              loader: 'postcss-loader',
-              options: {
-                plugins: () => [
-                  autoprefixer
-                ]
-              }
-            },
-            'sass-loader'
-          ]
-        })
+          },
+          'sass-loader'
+        ]
       }
     ],
   },
 
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
+
+    new MiniCssExtractPlugin(),
 
     new HtmlWebpackPlugin({
       template: helpers.root('src/public/index.html'),
@@ -73,9 +75,5 @@ module.exports = {
       },
       inject: true
     }),
-
-    new ExtractTextPlugin({
-      filename: '[name].[hash].css'
-    })
   ]
 };

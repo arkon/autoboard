@@ -6,7 +6,7 @@ A simple CRC card generator. Check it out live [here](https://echeung.me/crcmake
 ## Development
 
 ### Prerequisites
-- [Node.js v12+](https://nodejs.org/)
+- [Node.js v16+](https://nodejs.org/)
 
 ### Dependencies
 
