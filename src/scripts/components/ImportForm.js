@@ -1,5 +1,22 @@
+import Ajv from 'ajv';
 import React, { Component } from 'react';
 import Dialog from './Dialog';
+
+const jsonSchema = {
+  type: 'array',
+  items: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+      superclasses: { type: 'string' },
+      subclasses: { type: 'string' },
+      type: { type: 'integer' },
+      responsibilities: { type: 'array', items: { type: 'string' } },
+      collaborators: { type: 'array', items: { type: 'string' } },
+    },
+  },
+  additionalProperties: false,
+};
 
 export default class ImportForm extends Component {
   constructor (props) {
@@ -11,10 +28,19 @@ export default class ImportForm extends Component {
   parseInput (text) {
     const { onParsed } = this.props;
 
+    const ajv = new Ajv();
     try {
-      onParsed(JSON.parse(text));
+      const data = JSON.parse(text);
+      const valid = ajv.validate(jsonSchema, data);
+      if (!valid) {
+        console.error(ajv.errors);
+        window.alert('Error validating JSON — please make sure it has the correct data.')
+      } else {
+        onParsed(data);
+      }
     } catch (e) {
-      alert('Error importing the provided JSON -- please make sure the syntax is correct.');
+      console.error(e);
+      window.alert('Error parsing the provided JSON — please make sure the syntax is correct.');
     }
   }
 

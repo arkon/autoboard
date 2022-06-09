@@ -18,6 +18,7 @@
     "serve": "http-server -p 3001 ./dist -c-1 -o"
   },
   "dependencies": {
+    "ajv": "^8.11.0",
     "clipboard": "^2.0.11",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
