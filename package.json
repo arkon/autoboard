@@ -2,7 +2,7 @@
   "name": "crcmaker",
   "version": "0.0.0",
   "description": "A simple tool for generating CRC cards.",
-  "author": "Eugene Cheung (@arkon)",
+  "author": "arkon",
   "repository": {
     "type": "git",
     "url": "https://github.com/arkon/crcmaker"
