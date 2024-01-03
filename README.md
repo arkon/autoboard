@@ -1,6 +1,6 @@
 # CRC Maker
 
-A simple CRC card generator. Check it out live [here](https://echeung.me/crcmaker/).
+A simple CRC card generator. Check it out live [here](https://arkon.github.io/crcmaker/).
 
 
 ## Development
